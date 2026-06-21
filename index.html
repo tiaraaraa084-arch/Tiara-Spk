@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>SPK SAW - Penilaian Kualitas Biji Coklat</title>
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+  <!-- LOGIN PAGE -->
+  <div id="loginPage" class="login-wrap">
+    <div class="glass login-card">
+      <div class="brand">
+        <div class="brand-badge">SAW</div>
+        <div>
+          <h1>Sistem Pendukung Keputusan</h1>
+          <p>Penilaian Kualitas Biji Coklat</p>
+        </div>
+      </div>
+
+      <h2 class="title">Login sebelum masuk</h2>
+      <p class="subtitle">Masuk ke dashboard untuk mengelola 15 alternatif, 4 kriteria, dan hasil perhitungan SAW.</p>
+
+      <div style="height:18px"></div>
+
+      <label class="muted">Username</label>
+      <input id="loginUser" class="input" type="text" placeholder="admin" autocomplete="username" style="margin:8px 0 14px">
+
+      <label class="muted">Password</label>
+      <input id="loginPass" class="input" type="password" placeholder="123456" autocomplete="current-password" style="margin:8px 0 14px">
+
+      <button class="btn" id="btnLogin" style="width:100%">Masuk</button>
+      <div id="loginError" class="login-error">Username atau password salah.</div>
+
+      <div class="footer-note">Default login: <b>admin</b> / <b>123456</b></div>
+    </div>
+  </div>
+
+  <!-- APP PAGE -->
+  <div id="appPage" class="container hidden">
+    <div class="glass topbar">
+      <div>
+        <div class="badge">SAW • Biji Coklat</div>
+        <h1 style="margin:10px 0 4px">Dashboard Penilaian Kualitas Biji Coklat</h1>
+        <div class="meta">15 alternatif (A1–A15), 4 kriteria, localStorage, CRUD, dan perangkingan otomatis</div>
+      </div>
+      <div class="actions">
+        <button class="btn ghost" id="btnReset">Reset Data</button>
+        <button class="btn secondary" id="btnExport">Export JSON</button>
+        <button class="btn danger" id="btnLogout">Logout</button>
+      </div>
+    </div>
+
+    <div class="stats">
+      <div class="stat">
+        <div class="label">Total Alternatif</div>
+        <div class="value" id="statAlt">15</div>
+        <div class="small">A1 s/d A15</div>
+      </div>
+      <div class="stat">
+        <div class="label">Total Kriteria</div>
+        <div class="value" id="statCrit">4</div>
+        <div class="small">Bobot + tipe benefit/cost</div>
+      </div>
+      <div class="stat">
+        <div class="label">Alternatif Terbaik</div>
+        <div class="value" id="statBest">-</div>
+        <div class="small">Nilai akhir tertinggi</div>
+      </div>
+      <div class="stat">
+        <div class="label">Peringkat 1 Skor</div>
+        <div class="value" id="statScore">-</div>
+        <div class="small">Hasil SAW</div>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="glass section">
+        <div class="section-head">
+          <h2>Data Kriteria</h2>
+          <div class="toolbar">
+            <button class="btn ghost" id="btnSaveCriteria">Simpan Kriteria</button>
+          </div>
+        </div>
+
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kode</th>
+                <th>Nama Kriteria</th>
+                <th>Jenis</th>
+                <th>Bobot</th>
+              </tr>
+            </thead>
+            <tbody id="criteriaBody"></tbody>
+          </table>
+        </div>
+
+        <div class="note">
+          C1 = Ukuran Biji (benefit), C2 = Warna Biji (benefit), C3 = Kadar Air (cost), C4 = Kemurnian (benefit).
+        </div>
+      </div>
+
+      <div class="glass section">
+        <div class="section-head">
+          <h2>Alternatif Terbaik</h2>
+        </div>
+        <div id="bestCard" class="best-card">
+          <h3 id="bestName">-</h3>
+          <div class="score" id="bestValue">-</div>
+          <div class="desc" id="bestDesc">Hasil akan muncul setelah perhitungan SAW dijalankan.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass section">
+      <div class="section-head">
+        <h2>Input / Edit Alternatif</h2>
+      </div>
+
+      <div class="form-card">
+        <div class="form-row">
+          <div>
+            <label class="muted">Kode Alternatif</label>
+            <input id="altCode" class="input" placeholder="A1">
+          </div>
+          <div>
+            <label class="muted">Nama Alternatif</label>
+            <input id="altName" class="input" placeholder="Biji Coklat 1">
+          </div>
+          <div>
+            <label class="muted">C1 Ukuran Biji</label>
+            <input id="altC1" class="input" type="number" min="1" max="5" placeholder="1-5">
+          </div>
+          <div>
+            <label class="muted">C2 Warna Biji</label>
+            <input id="altC2" class="input" type="number" min="1" max="5" placeholder="1-5">
+          </div>
+          <div>
+            <label class="muted">C3 Kadar Air</label>
+            <input id="altC3" class="input" type="number" min="1" max="5" placeholder="1-5">
+          </div>
+          <div>
+            <label class="muted">C4 Kemurnian</label>
+            <input id="altC4" class="input" type="number" min="1" max="5" placeholder="1-5">
+          </div>
+          <div>
+            <label class="muted">Aksi</label>
+            <button class="btn" id="btnAddAlt" style="width:100%">Tambah / Update</button>
+          </div>
+          <div>
+            <label class="muted">Cari Alternatif</label>
+            <input id="searchAlt" class="input" placeholder="Cari A1, A2, ...">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="glass section">
+      <div class="section-head">
+        <h2>Data Alternatif</h2>
+        <div class="toolbar">
+          <button class="btn ghost" id="btnRandomize">Isi Contoh 15 Alternatif</button>
+          <button class="btn success" id="btnCalc">Hitung SAW</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Kode</th>
+              <th>Nama</th>
+              <th>C1</th>
+              <th>C2</th>
+              <th>C3</th>
+              <th>C4</th>
+              <th>Aksi</th>
+            </tr>
+          </thead>
+          <tbody id="altBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <div class="grid grid-2">
+      <div class="glass section">
+        <div class="section-head">
+          <h2>Proses Perhitungan SAW</h2>
+          <div class="badge">Normalisasi + Bobot</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Kode</th>
+                <th>N1</th>
+                <th>N2</th>
+                <th>N3</th>
+                <th>N4</th>
+                <th>Nilai Akhir</th>
+              </tr>
+            </thead>
+            <tbody id="processBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="glass section">
+        <div class="section-head">
+          <h2>Hasil Akhir & Peringkat</h2>
+          <div class="badge good">Ranking Otomatis</div>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Rank</th>
+                <th>Kode</th>
+                <th>Nama</th>
+                <th>Nilai</th>
+              </tr>
+            </thead>
+            <tbody id="rankBody"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
